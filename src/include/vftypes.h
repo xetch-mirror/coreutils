@@ -12,13 +12,19 @@
 /* Коды возврата */
 #define VFS_OK          0
 #define VFS_ERROR      -1
-#define VFS_ENOENT     -2
-#define VFS_ENOMEM     -3
+#define VFS_ENOENT     -2   /* нет такого файла/пути */
+#define VFS_ENOMEM     -3   /* не хватило памяти */
+#define VFS_EEXIST     -4   /* уже существует (mkdir на занятый путь) */
+#define VFS_ENOTDIR    -5   /* ожидалась директория, но это файл */
+#define VFS_EISDIR     -6   /* ожидался файл, но это директория (напр. cat на папку) */
+#define VFS_ENOTEMPTY  -7   /* rmdir/rm -r на непустую директорию */
+#define VFS_EINVAL     -8   /* некорректные аргументы */
 
 /* Флаги типа узла */
 #define VFS_FILE       (1 << 0)  /* 0x01 */
 #define VFS_DIRECTORY  (1 << 1)  /* 0x02 */
 #define VFS_BLOCKDEV   (1 << 2)  /* 0x04 */
+#define VFS_SYMLINK    (1 << 3)  /* 0x08 — зарезервировано, узлы этого типа пока не создаются */
 
 /* Предварительные объявления — сама структура и её операции
    остаются в vfs.h, здесь только типы, на которые все ссылаются */
@@ -44,5 +50,13 @@ typedef struct vfs_file {
     uint32_t offset;
     uint32_t flags;
 } vfs_file_t;
+
+/* Сводка о файле для утилит вроде ls/cp/rm — избавляет их
+   от необходимости лезть в поля vfs_node_t напрямую */
+typedef struct {
+    uint32_t size;
+    uint32_t flags;
+    uint32_t inode_id;
+} vfs_stat_t;
 
 #endif
