@@ -56,6 +56,7 @@ vfs_node_t *vfs_lookup(const char *path);
 int vfs_register_node(vfs_node_t node);
 void vfs_init(void);
 void vfs_list_dir(const char *path);
+int vfs_link(const char *target, const char *linkname);
 
 // OPERATION
 static inline int vfs_open(const char *path, vfs_file_t *out_file) {
